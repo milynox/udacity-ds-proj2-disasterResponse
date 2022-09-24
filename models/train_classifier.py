@@ -8,7 +8,6 @@ import numpy as np
 
 from nltk.corpus import stopwords, wordnet
 from nltk.stem.wordnet import WordNetLemmatizer
-from nltk.stem.porter import PorterStemmer
 from nltk.tokenize import word_tokenize
 
 from sklearn.pipeline import Pipeline
@@ -28,6 +27,15 @@ nltk.download('averaged_perceptron_tagger')
 nltk.download('omw-1.4')
 
 def load_data(database_filepath):
+    """
+    Load from SQLite database to use in modeling
+    params:
+        - database_filepath: the path of SQLite database
+    return:
+        - X: features to be used to train model
+        - y: labels for each observation
+        - y.columns: categories' names
+    """
     # read data from database
     engine = create_engine('sqlite:///{}'.format(database_filepath)).connect()
     df = pd.read_sql_table('cleaned_data', engine)
@@ -40,6 +48,13 @@ def load_data(database_filepath):
     return (X, y, y.columns)
 
 def tokenize(text):
+    """
+    Function to tokenize the text.
+    params:
+        - text: input text
+    return:
+        - a list of words from the text but normalized.
+    """
     # prepare Stemmer and Lemmatizer
     stemmer = PorterStemmer()
     lemmer = WordNetLemmatizer()
@@ -54,11 +69,9 @@ def tokenize(text):
     # stop word removal
     tokens = [x for x in tokens if x not in stopwords.words('english')]
     
-    # stemming & lemmetization
-    stemmed = [stemmer.stem(w) for w in tokens]
-    
+    # lemmetization    
     # tag word
-    pos_tagged = nltk.pos_tag(stemmed)
+    pos_tagged = nltk.pos_tag(tokens)
     
     def pos_tagger(nltk_tag):
         if nltk_tag.startswith('J'):
@@ -85,6 +98,12 @@ def tokenize(text):
 
 
 def build_model():
+    """
+    Construct the models with attached GridSearch
+    params: None
+    return: A model with GridSearch inside
+    
+    """
     pipeline = Pipeline([
         ('vect', CountVectorizer(tokenizer=tokenize)),
         ('tfidf', TfidfTransformer()),
@@ -100,6 +119,15 @@ def build_model():
 
 
 def evaluate_model(model, X_test, Y_test, category_names):
+    """
+    Evaluate the model with test data.
+    params:
+        - model: the trained model to be used to test data
+        - X_test: feature on test dataset
+        - Y_test: labels on test dataset
+        - category_names: As its name.
+    return: None
+    """
     # predict the model
     Y_predict = model.predict(X_test)
 
@@ -119,6 +147,9 @@ def evaluate_model(model, X_test, Y_test, category_names):
 
 
 def save_model(model, model_filepath):
+    """
+    Serialize the model.
+    """
     pickle.dump(model, open(model_filepath, 'wb'))
 
 

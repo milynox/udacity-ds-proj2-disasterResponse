@@ -7,8 +7,29 @@ As there are millions of messages communicated, spending human effort on filteri
 Building a machine learning pipeline to help classifying messeages that are relevant would be very helpful for disaster response organization while a disaster happens.
 
 ## Project structure
+```
+.
+├── app # source code of Flask app used to input the message and show the its class.
+│   ├── run.py # file to run Flask app
+│   ├── templates
+│   │   ├── go.html
+│   │   └── master.html
+│   └── words_more_than_300.csv # pre-processed datasets used to visualize words with frequency more than 300.
+├── data
+│   ├── disaster_categories.csv # categories raw data
+│   ├── disaster_messages.csv # messages raw data
+│   ├── DisasterResponse.db # processed table stored in this database
+│   └── process_data.py # ETL pipeline
+├── models
+│   ├── classifier.pkl # models used to predict data
+│   └── train_classifier.py # machine learning pipeline
+└── README.md
+
+4 directories, 11 files
+```
+
 This projects contains three folders: 
-1. `app`: includes the source code of Flask app used to input the message and show the its class.
+1. `app`: includes the 
 2. `data`: stores the raw data (csv format) and SQLite database that need for training and testing the model. It also contains the ETL steps used to transform raw data into SQLite database.
 3. `models`: stores the source code for the modeling and a model named `classifier.pkl` used as backend to classify messages.
 

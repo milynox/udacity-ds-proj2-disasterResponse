@@ -5,6 +5,15 @@ from sqlalchemy import create_engine
 
 
 def load_data(messages_filepath, categories_filepath):
+    '''
+    Load raw data to pre-process.
+    
+    params: 
+        - messages_filepath: messages filepath
+        - categories_filepath: categories filepath
+    return:
+        - Pandas dataframe of messages and categories
+    '''
     messages = pd.read_csv(messages_filepath)
     categories = pd.read_csv(categories_filepath)
     
@@ -12,6 +21,16 @@ def load_data(messages_filepath, categories_filepath):
 
 
 def clean_data(messages, categories):
+    """
+    Normalize the categories data and join it with messages.
+    
+    params:
+        - messages: messages pandas dataframe
+        - categories: categories pandas dataframe
+    return:
+        - processed pandas dataframe
+    
+    """
     # clean messages
     messages = messages.drop_duplicates()
     
@@ -30,7 +49,7 @@ def clean_data(messages, categories):
     prepared_cat.columns = header
     
         # prepare categories
-    prepared_cat = prepared_cat.apply(lambda x: x.str.split('-').str[1].astype(int))
+    prepared_cat = prepared_cat.apply(lambda x: x.str.split('-').str[1].astype(bool))
     
     # prepare final df
     df = df.drop(columns=['categories'])
@@ -42,8 +61,17 @@ def clean_data(messages, categories):
 
 
 def save_data(df, database_filename):
+    """
+    Save data to a SQLite database.
+    
+    params: 
+        - df: dataframe that needs saving
+        - database_filename: file name of database
+    return: None
+    
+    """
     engine = create_engine('sqlite:///{}'.format(database_filename))
-    df.to_sql('cleaned_data', engine, index=False)  
+    df.to_sql('cleaned_data', engine, index=False, if_exists='replace')  
 
 
 def main():
