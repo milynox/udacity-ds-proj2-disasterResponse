@@ -49,13 +49,16 @@ def clean_data(messages, categories):
     prepared_cat.columns = header
     
         # prepare categories
-    prepared_cat = prepared_cat.apply(lambda x: x.str.split('-').str[1].astype(bool))
+    prepared_cat = prepared_cat.apply(lambda x: x.str.split('-').str[1].astype(int))
+    cat_columns = prepared_cat.columns
     
     # prepare final df
     df = df.drop(columns=['categories'])
     df = pd.concat([df, prepared_cat], axis=1)
     df = df.drop_duplicates()
     df = df.dropna(how='any', axis=0)
+    for col in cat_columns:
+        df = df[df[col].isin([0, 1])]
     
     return df
 
