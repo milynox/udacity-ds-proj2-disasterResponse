@@ -75,7 +75,7 @@ def index():
             ],
 
             'layout': {
-                'title': 'Count of standardlized words which appear more than 300 times in all messages (Total is 8479)',
+                'title': 'Count of standardlized words which appear more than 300 times in all messages (Total is 9292)',
                 'yaxis': {
                     'title': 'Count'
                 },
