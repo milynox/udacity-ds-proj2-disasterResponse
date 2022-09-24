@@ -30,7 +30,7 @@ engine = create_engine('sqlite:///../data/DisasterResponse.db')
 df = pd.read_sql_table('cleaned_data', engine)
 
 # load model
-model = joblib.load("../models/my_model.pkl")
+model = joblib.load("../models/classifier.pkl")
 
 
 # index webpage displays cool visuals and receives user input text for model
@@ -43,6 +43,8 @@ def index():
     genre_counts = df.groupby('genre').count()['message']
     genre_names = list(genre_counts.index)
     
+    # Read words more than 500 data
+    words = pd.read_csv('words_more_than_300.csv', names=['word', 'count'])
     # create visuals
     # TODO: Below is an example - modify to create your own visuals
     graphs = [
@@ -63,7 +65,27 @@ def index():
                     'title': "Genre"
                 }
             }
+        },
+        {
+            'data':[
+                Bar(
+                    x=words['word'],
+                    y=words['count']
+                )
+            ],
+
+            'layout': {
+                'title': 'Count of standardlized words which appear more than 300 times in all messages (Total is 8479)',
+                'yaxis': {
+                    'title': 'Count'
+                },
+                'xaxis': {
+                    'title': 'Word'
+                }
+            }
         }
+        
+        
     ]
     
     # encode plotly graphs in JSON
